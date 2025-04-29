@@ -32,7 +32,6 @@ public class B_Student {
 
     // protected B_Student() {}
     // JPA 는 엔티티 생성 시 기본 생성자를 사용 - 필수
-
     public B_Student(String name, String email) {
         this.name = name;
         this.email = email;
