@@ -1,6 +1,8 @@
 package com.example.korea_sleepTech_springboot.service;
 
-import com.example.korea_sleepTech_springboot.dto.StudentDto;
+import com.example.korea_sleepTech_springboot.dto.response.StudentResponseDto;
+import com.example.korea_sleepTech_springboot.dto.request.StudentCreateRequestDto;
+import com.example.korea_sleepTech_springboot.dto.request.StudentUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.entity.B_Student;
 import com.example.korea_sleepTech_springboot.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
@@ -18,16 +20,16 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    public List<StudentDto> getAllStudents() {
+    public List<StudentResponseDto> getAllStudents() {
         // 전체 학생 데이터 조회
-        List<StudentDto> studentDtos = null;
+        List<StudentResponseDto> studentResponseDtos = null;
 
         try {
             List<B_Student> students = studentRepository.findAll(); // email 까지 포함되어있음
 
             // email을 포함하지 않는 Dto 형식으로 변환
-            studentDtos = students.stream() // stream API로 데이터 처리 (전체 리스트 순회 + 각 요소에 동일 기능 적용)
-                    .map(student -> new StudentDto (
+            studentResponseDtos = students.stream() // stream API로 데이터 처리 (전체 리스트 순회 + 각 요소에 동일 기능 적용)
+                    .map(student -> new StudentResponseDto(
                             student.getId(),
                             student.getName()
                     ))
@@ -38,7 +40,7 @@ public class StudentService {
             // 2) .map(), .filter() 등 중간 연산
             // 3) 리스트 형태로 다시 변환 - .collect(Collectors.toList());
 
-            return studentDtos;
+            return studentResponseDtos;
 
         } catch (Exception e) {
             throw new ResponseStatusException(
@@ -49,19 +51,19 @@ public class StudentService {
         }
     }
 
-    public StudentDto getStudentById(Long id) {
-        StudentDto studentDto = null;
+    public StudentResponseDto getStudentById(Long id) {
+        StudentResponseDto studentResponseDto = null;
 
         try {
             B_Student student = studentRepository.findById(id)
                     .orElseThrow(() -> new Error("Student not found with id: " + id));
 
-            studentDto = new StudentDto(
+            studentResponseDto = new StudentResponseDto(
                     student.getId(),
                     student.getName()
             );
 
-            return studentDto;
+            return studentResponseDto;
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, // HTTP 상태 코드
@@ -71,19 +73,24 @@ public class StudentService {
         }
     }
 
-    public StudentDto createStudent(B_Student student) {
-        StudentDto studentDto = null;
+    public StudentResponseDto createStudent(StudentCreateRequestDto studentDto) {
+        StudentResponseDto studentResponseDto = null;
 
         try {
+            B_Student student = new B_Student(
+                    studentDto.getName(),
+                    studentDto.getEmail()
+            );
+
             B_Student savedStudent = studentRepository.save(student);
 
             // 저장되고 난 후 B_Student 객체를 DTO로 변환하여 반환
-            studentDto = new StudentDto(
+            studentResponseDto = new StudentResponseDto(
                     savedStudent.getId(),
                     student.getName()
             );
 
-            return studentDto;
+            return studentResponseDto;
 
         } catch (Exception e) {
             throw new ResponseStatusException(
@@ -94,8 +101,8 @@ public class StudentService {
         }
     }
 
-    public StudentDto updateStudent(Long id, StudentDto studentdto) {
-        StudentDto responseDto = null;
+    public StudentUpdateRequestDto updateStudent(Long id, StudentUpdateRequestDto studentdto) {
+        StudentResponseDto responseDto = null;
 
         try {
             B_Student student = studentRepository.findById(id)
@@ -103,9 +110,16 @@ public class StudentService {
 
             student.setName(studentdto.getName());
 
+            // ====== JPA save() 메서드의 동작 방식 (2가지) ====== //
+
+            // 1) 새로운 객체(PK 없음) 저장: INSERT SQL 실행 (새로 저장)
+            // 2) 기존 객체(PK 있음) 저장: UPDATE SQL 실행 (기존 데이터 수정)
+            
+            // cf) PK 값이 null 인지 유무를 자동 확인
+            // >>> save() 하나로 JPA 가 자동 저장을 처리
             B_Student updatedStudent = studentRepository.save(student);
 
-            responseDto = new StudentDto(
+            responseDto = new StudentResponseDto(
                     updatedStudent.getId(),
                     updatedStudent.getName()
             );
@@ -122,6 +136,18 @@ public class StudentService {
     }
 
     public void deleteStudent(Long id) {
-        
+        try {
+            B_Student student = studentRepository.findById(id)
+                    .orElseThrow(() -> new Error("Student not found with id: " + id));
+            
+            studentRepository.delete(student); // 조회한 학생 객체를 DB 에서 삭제
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, // HTTP 상태 코드
+                    "Error occurred while fetching student", // 에러 메시지
+                    e // 예외 원인
+            );
+        }
     }
 }

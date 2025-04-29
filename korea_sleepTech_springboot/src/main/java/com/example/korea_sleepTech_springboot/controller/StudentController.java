@@ -1,7 +1,8 @@
 package com.example.korea_sleepTech_springboot.controller;
 
-import com.example.korea_sleepTech_springboot.dto.StudentDto;
-import com.example.korea_sleepTech_springboot.entity.B_Student;
+import com.example.korea_sleepTech_springboot.dto.response.StudentResponseDto;
+import com.example.korea_sleepTech_springboot.dto.request.StudentCreateRequestDto;
+import com.example.korea_sleepTech_springboot.dto.request.StudentUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.service.StudentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class StudentController {
     * */
     // "/student" 경로의 GET 요청을 처리
     @GetMapping
-    public List<StudentDto> getAllStudents() {
+    public List<StudentResponseDto> getAllStudents() {
         return studentService.getAllStudents();
     }
 
@@ -37,7 +38,7 @@ public class StudentController {
      * */
     // "/student/{id}" 경로로 오는 GET 요청을 처리 - {id}는 경로 변수로 사용
     @GetMapping("/{id}")
-    public StudentDto getStudentById(@PathVariable Long id) {
+    public StudentResponseDto getStudentById(@PathVariable Long id) {
         // @PathVariable: URL 경로에 전달된 동적 데이터를 메서드 파라미터로 매핑
         return studentService.getStudentById(id);
     }
@@ -48,7 +49,7 @@ public class StudentController {
      * @Return(응답-반환값): StudentDto
      * */
     @PostMapping
-    public StudentDto createStudent(@RequestBody B_Student student) {
+    public StudentResponseDto createStudent(@RequestBody StudentCreateRequestDto student) {
         // @RequestBody: 클라이언트에서 전달된 JSON 데이터를 B_Student 형태로 변환
         return studentService.createStudent(student);
     }
@@ -58,9 +59,9 @@ public class StudentController {
      * @Params(요청-매개변수): 특정 학생의 id, 수정할 학생 정보 StudentDto
      * @Return(응답-반환값): StudentDto
      * */
-    @PutMapping
-    public StudentDto updateStudent(@PathVariable Long id, @RequestBody StudentDto studentdto) {
-        return studentService.updateStudent(id, studentdto);
+    @PutMapping("/{id}")
+    public StudentUpdateRequestDto updateStudent(Long id, StudentUpdateRequestDto studentDto) {
+        return studentService.updateStudent(id, studentDto);
     }
 
     // 5) 특정 ID의 학생 정보 삭제 (DELETE)
@@ -68,7 +69,7 @@ public class StudentController {
      * @Params(요청-매개변수): 특정 학생의 id
      * @Return(응답-반환값): ResponseEntity<Void>
      * */
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         
