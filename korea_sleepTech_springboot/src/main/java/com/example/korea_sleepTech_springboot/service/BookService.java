@@ -5,6 +5,7 @@ import com.example.korea_sleepTech_springboot.dto.request.BookUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.response.BookResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.entity.C_Book;
+import com.example.korea_sleepTech_springboot.entity.C_Category;
 import com.example.korea_sleepTech_springboot.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,11 +32,11 @@ public class BookService {
                     savedBook.getCategory()
             );
 
-            return ResponseDto.success("새로운 책이 정상적으로 등록되었습니다.", response);
+            return ResponseDto.setSuccess("새로운 책이 정상적으로 등록되었습니다.", response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseDto.setFailed("게시글 등록 중 오류가 발생하였습니다." + e.getMessage());
+            return ResponseDto.setFailed("게시글 등록 중 오류가 발생하였습니다: " + e.getMessage());
         }
     }
 
@@ -129,10 +130,60 @@ public class BookService {
                     ))
                     .collect(Collectors.toList());
 
-            return ResponseDto.success("책 검색을 정상적으로 완료하였습니다.", books);
-        } catch(Exception e){
+            return ResponseDto.setSuccess("책 검색을 정상적으로 완료하였습니다.", books);
+
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseDto.setFailed("책을 검색하는 동안 문제가 발생하였습니다.");
+        }
+    }
+
+    public ResponseDto<List<BookResponseDto>> getBooksByCategory(C_Category category) {
+        List<BookResponseDto> books = null;
+
+        try {
+            List<C_Book> booksByCategory = bookRepository.findByCategory(category);
+
+            books = booksByCategory.stream()
+                    .map(book -> new BookResponseDto(
+                            book.getWriter(),
+                            book.getTitle(),
+                            book.getCategory()
+                    ))
+                    .collect(Collectors.toList());
+
+            return ResponseDto.setSuccess("카테고리별 책 조회가 성공하였습니다.", books);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed("카테고리별 책을 검색하는 동안 문제가 발생하였습니다.");
+        }
+    }
+
+    public ResponseDto<List<BookResponseDto>> getBooksByCategoryAndWriter(C_Category category, String writer) {
+        List<BookResponseDto> books = null;
+        List<C_Book> searchingBook = null;
+
+        try {
+            if (category == null) {
+                searchingBook = bookRepository.findByWriter(writer);
+            } else {
+                searchingBook = bookRepository.findByCategoryAndWriter(category, writer);
+            }
+
+            books = searchingBook.stream()
+                    .map(book -> new BookResponseDto(
+                            book.getWriter(),
+                            book.getTitle(),
+                            book.getCategory()
+                    ))
+                    .collect(Collectors.toList());
+
+            return ResponseDto.setSuccess("조회가 완료되었습니다.", books);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseDto.setFailed("카테고리와 작성자로 조회하는 동안 문제가 발생하였습니다.");
         }
     }
 }
