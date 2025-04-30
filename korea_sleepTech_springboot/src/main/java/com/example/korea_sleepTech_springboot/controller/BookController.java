@@ -4,6 +4,7 @@ import com.example.korea_sleepTech_springboot.common.ApiMappingPattern;
 import com.example.korea_sleepTech_springboot.dto.request.BookCreateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.request.BookUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.response.BookResponseDto;
+import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,14 @@ public class BookController {
     // 1. 기본 CRUD
     // 1) CREATE - BOOK 생성
     @PostMapping
-    public ResponseEntity<BookResponseDto> createBook(@RequestBody BookCreateRequestDto dto) {
-        BookResponseDto book = bookService.createBook(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(book);
+    public ResponseEntity<ResponseDto<BookResponseDto>> createBook(@RequestBody BookCreateRequestDto dto) {
+        try {
+            ResponseDto<BookResponseDto> book = bookService.createBook(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(book);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     // 2) READ - 전체 책 조회
@@ -58,4 +64,32 @@ public class BookController {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
     }
+    
+    // 2. 검색 & 필터링 (@RequestParam)
+    //: GET 메서드
+    
+    // 1) 제목에 특정 단어가 포함된 책 조회
+    @GetMapping("/search/title")
+    public ResponseEntity<ResponseDto<List<BookResponseDto>>> getBooksByTitleContaining(
+            @RequestParam String keyword
+            // 경로값에 ? 이후의 데이터를 키-값의 쌍으로 추출되는 값 (?키=값)
+            // >> 키의 변수에 값이 할당
+            // >> localhost:8080/books/search/title?keyword=xxxx
+            
+            // +) @RequestParam은 항상 문자열로 반환
+            // : 숫자형은 int, long 으로 자동 변환
+            // - 변환 실패 시 400 에러가 발생
+    ) {
+        try {
+            ResponseDto<List<BookResponseDto>> books = bookService.getBooksByTitleContaining(keyword);
+            return ResponseEntity.status(HttpStatus.OK).body(books);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+    
+    // 2) 카테고리별 책 조회
+    
+    // 3) 카테고리와 작성자별 책 조회
 }
