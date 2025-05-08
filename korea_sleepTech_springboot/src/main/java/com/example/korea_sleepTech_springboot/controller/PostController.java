@@ -3,6 +3,7 @@ package com.example.korea_sleepTech_springboot.controller;
 import com.example.korea_sleepTech_springboot.common.ApiMappingPattern;
 import com.example.korea_sleepTech_springboot.dto.request.PostCreateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.response.PostDetailResponseDto;
+import com.example.korea_sleepTech_springboot.dto.response.PostListResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.service.PostService;
 import jakarta.validation.Valid;
@@ -10,10 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController // @ResponseBody + @Controller
 @RequestMapping(ApiMappingPattern.POST_API)
@@ -32,5 +32,20 @@ public class PostController {
     public ResponseEntity<ResponseDto<PostDetailResponseDto>> createPost(@Valid @RequestBody PostCreateRequestDto dto) {
         ResponseDto<PostDetailResponseDto> post = postService.createPost(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
+    }
+
+    // 2) 단건 조회 (댓글 포함)
+    // @Param: 조회하고자 하는 댓글을 지정하는 고유 id - PathVariable(경로 변수)
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDto<PostDetailResponseDto>> getPostById(@PathVariable Long id) {
+        ResponseDto<PostDetailResponseDto> post = postService.getPostById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(post);
+    }
+
+    // 3) 전체 조회 (댓글 제외)
+    @GetMapping
+    public ResponseEntity<ResponseDto<List<PostListResponseDto>>> getAllPosts() {
+        ResponseDto<List<PostListResponseDto>> posts = postService.getAllPosts();
+        return ResponseEntity.status(HttpStatus.OK).body(posts);
     }
 }
