@@ -2,12 +2,14 @@ package com.example.korea_sleepTech_springboot.service.implementations;
 
 import com.example.korea_sleepTech_springboot.common.ResponseMessage;
 import com.example.korea_sleepTech_springboot.dto.request.PostCreateRequestDto;
+import com.example.korea_sleepTech_springboot.dto.request.PostUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.response.CommentResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.PostDetailResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.PostListResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.entity.D_Post;
 import com.example.korea_sleepTech_springboot.repository.PostRepository;
+import com.example.korea_sleepTech_springboot.service.CommentService;
 import com.example.korea_sleepTech_springboot.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -91,5 +93,49 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
 
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDtos);
+    }
+
+    @Override
+    @Transactional
+    public ResponseDto<PostDetailResponseDto> upadatePost(Long id, PostUpdateRequestDto dto) {
+        PostDetailResponseDto responseDto = null;
+
+        D_Post post = postRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Post not found with id: " + id));
+
+        post.setTitle(dto.getTitle());
+        post.setContent(dto.getContent());
+
+        D_Post updatedPost = postRepository.save(post);
+
+        responseDto = PostDetailResponseDto.builder()
+                .id(updatedPost.getId())
+                .title(updatedPost.getTitle())
+                .content(updatedPost.getContent())
+                .author(updatedPost.getAuthor())
+                .comments(updatedPost.getComments().stream()
+                        .map(comments -> CommentResponseDto.builder()
+                                .id(comments.getId())
+                                .postId(comments.getPost().getId())
+                                .content(comments.getContent())
+                                .commenter(comments.getCommenter())
+                                .build())
+                        .collect(Collectors.toList())
+                )
+                .build();
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, responseDto);
+    }
+
+    @Override
+    public ResponseDto<Void> deletePost(Long id) {
+        if (!postRepository.existsById(id)) {
+            // .existsById(PK 값)
+            // : 존재하면 True, 존재하지 않으면 False 반환
+            throw new EntityNotFoundException("Post not found with id: " + id);
+        }
+
+        postRepository.deleteById(id);
+
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
     }
 }
