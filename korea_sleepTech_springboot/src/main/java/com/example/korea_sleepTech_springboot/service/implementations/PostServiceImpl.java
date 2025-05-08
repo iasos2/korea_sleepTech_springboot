@@ -12,6 +12,7 @@ import com.example.korea_sleepTech_springboot.service.PostService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
+    @Transactional
     public ResponseDto<PostDetailResponseDto> createPost(PostCreateRequestDto dto) {
         PostDetailResponseDto responseDto = null;
 
@@ -45,6 +47,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<PostDetailResponseDto> getPostById(Long id) {
         PostDetailResponseDto responseDto = null;
 
@@ -72,6 +75,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseDto<List<PostListResponseDto>> getAllPosts() {
         List<PostListResponseDto> responseDtos = null;
 
