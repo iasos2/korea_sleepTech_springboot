@@ -1,3 +1,4 @@
+
 package com.example.korea_sleepTech_springboot.controller;
 
 import com.example.korea_sleepTech_springboot.common.ApiMappingPattern;
@@ -23,27 +24,32 @@ public class CommentController {
 
     // 1) 댓글 생성
     @PostMapping
-    public ResponseEntity<ResponseDto<CommentResponseDto>> createComment(@Valid @RequestBody CommentCreateRequestDto dto) {
-        ResponseDto<CommentResponseDto> response = commentService.createComment(dto);
+    public ResponseEntity<ResponseDto<CommentResponseDto>> createComment(
+            @PathVariable Long postId,
+            @Valid @RequestBody CommentCreateRequestDto dto
+    ) {
+        ResponseDto<CommentResponseDto> response = commentService.createComment(postId, dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     // 2) 댓글 수정
-    @GetMapping("/{id}")
+    @PutMapping("/{commentId}")
     public ResponseEntity<ResponseDto<CommentResponseDto>> updateComment(
-            @PathVariable Long id,
-            @Valid @RequestBody CommentUpdateRequestDto dto
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @RequestBody CommentUpdateRequestDto dto
     ) {
-        ResponseDto<CommentResponseDto> response = commentService.upadateComment(id, dto);
+        ResponseDto<CommentResponseDto> response = commentService.updateComment(postId, commentId, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 3) 댓글 삭제
-    @GetMapping("/{id}")
+    @DeleteMapping("/{commentId}")
     public ResponseEntity<ResponseDto<Void>> deleteComment(
-            @PathVariable Long id
+            @PathVariable Long postId,
+            @PathVariable Long commentId
     ) {
-        ResponseDto<Void> response = commentService.deleteComment(id);
+        ResponseDto<Void> response = commentService.deleteComment(postId, commentId);
         return ResponseEntity.noContent().build();
     }
 }
