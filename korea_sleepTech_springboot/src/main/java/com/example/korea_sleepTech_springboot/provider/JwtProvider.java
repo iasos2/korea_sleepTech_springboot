@@ -1,11 +1,14 @@
 package com.example.korea_sleepTech_springboot.provider;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Date;
 
 /*
 * === JwtProvider 클래스 ===
@@ -50,6 +53,26 @@ public class JwtProvider {
     * @Return: 생성된 JWT 토큰 문자열
     * */
     public String generateJwtToken(String username) {
+        return Jwts.builder()
+                // 클레임에 사용자 ID를 저장 (User 엔티티의 id가 아니라 ,로그인 시 사용할 사용자 식별자)
+                .claim("username", username)
+                // 현재 시간을 기준으로 토큰 발행 시간 설정
+                .setIssuedAt(new Date())
+                // 현재 시간에 만료 시간을 더해 토큰 만료 시간 설정
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                // HMAC-SHA256 알고리즘으로 생성된 비밀키로 서명
+                .signWith(key, SignatureAlgorithm.HS256)
+                // JWT를 최종적으로 직렬화하여 문자열로 반환
+                .compact();
+    }
+
+    public String removeBearer(String authorizationHeader) {
         return null;
+    }
+
+    public boolean isValidToken(String token) {
+    }
+
+    public String getUsernameFromJwt(String token) {
     }
 }
