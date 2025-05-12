@@ -17,4 +17,7 @@ public class ApiMappingPattern {
     // 2) 댓글 수정(PUT): /api/v1/posts/{postId}/comments/{commentId}
     // 3) 댓글 삭제(DELETE): /api/v1/posts/{postId}/comments/{commentId}
     public static final String COMMENT_API = "/api/v1/posts/{postId}/comments";
+
+
+    public static final String AUTH_API = "/api/v1/auth";
 }
