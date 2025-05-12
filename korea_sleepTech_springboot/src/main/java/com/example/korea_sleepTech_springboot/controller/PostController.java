@@ -5,11 +5,11 @@ import com.example.korea_sleepTech_springboot.dto.request.PostCreateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.request.PostUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.response.PostDetailResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.PostListResponseDto;
+import com.example.korea_sleepTech_springboot.dto.response.PostWithCommentCountResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +37,7 @@ public class PostController {
 
     // 2) 단건 조회 (댓글 포함)
     // @Param: 조회하고자 하는 댓글을 지정하는 고유 id - PathVariable(경로 변수)
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") //  "/api/v1/posts/{id}"
     public ResponseEntity<ResponseDto<PostDetailResponseDto>> getPostById(@PathVariable Long id) {
         ResponseDto<PostDetailResponseDto> post = postService.getPostById(id);
         return ResponseEntity.status(HttpStatus.OK).body(post);
@@ -56,7 +56,7 @@ public class PostController {
             @PathVariable Long id,
             @Valid @RequestBody PostUpdateRequestDto dto
     ) {
-        ResponseDto<PostDetailResponseDto> response = postService.upadatePost(id, dto);
+        ResponseDto<PostDetailResponseDto> response = postService.updatePost(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -66,4 +66,34 @@ public class PostController {
         ResponseDto<Void> response = postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }
+
+    // =========================================================== //
+    // PostController의 메인 경로: "/api/v1/posts"
+
+    // 6) 특정 작성자의 모든 게시글 조회
+    @GetMapping("/author/{author}")
+    public ResponseEntity<ResponseDto<List<PostListResponseDto>>> getPostsByAuthor(@PathVariable String author) {
+        ResponseDto<List<PostListResponseDto>> response = postService.getPostsByAuthor(author);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 7) 특정 키워드로 제목 검색
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDto<List<PostListResponseDto>>> searchPostsByTitle(@RequestParam String keyword) {
+        ResponseDto<List<PostListResponseDto>> response = postService.searchPostsByTitle(keyword);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    // 8) 댓글이 가장 많은 상위 5개의 게시글 조회
+    @GetMapping("/top-comments")
+    public ResponseEntity<ResponseDto<List<PostWithCommentCountResponseDto>>> getTop5PostsByComments() {
+        ResponseDto<List<PostWithCommentCountResponseDto>> response = postService.getTop5PostsByComments();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+
+
+
+
 }
