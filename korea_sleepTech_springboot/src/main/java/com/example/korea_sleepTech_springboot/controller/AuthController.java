@@ -11,10 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(ApiMappingPattern.AUTH_API)
@@ -23,7 +20,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // === AuthController mapping pattern ===
+    // === AuthController mapping pattern === //
     private static final String POST_SIGN_UP = "/signup";
     private static final String POST_SIGN_IN = "/login";
 
@@ -31,9 +28,11 @@ public class AuthController {
     // - HTTP 메서드: POST
     // - URI 경로: /signup
     // @Params: UserSignUpRequestDto
+    // @Return: UserSignUpResponseDto
     @PostMapping(POST_SIGN_UP)
-    public ResponseEntity<ResponseDto<UserSignUpResponseDto>> sigunUp(@Valid @RequestBody UserSignUpRequestDto dto) {
-        ResponseDto<UserSignUpResponseDto> response = authService.signUp(dto);
+    public ResponseEntity<ResponseDto<UserSignUpResponseDto>> signup(@Valid @RequestBody UserSignUpRequestDto dto) {
+        System.out.println("=== 회원가입 요청 도착 ===");
+        ResponseDto<UserSignUpResponseDto> response = authService.signup(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -41,7 +40,7 @@ public class AuthController {
     // - HTTP 메서드: POST
     // - URI 경로: /login
     // @Params: UserSignInRequestDto
-    // @Return: UserSignIngResponseDto
+    // @Return: UserSignInResponseDto
 
     // GET VS "POST"
     // : POST 사용을 권장
@@ -52,5 +51,4 @@ public class AuthController {
         ResponseDto<UserSignInResponseDto> response = authService.login(dto);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 }

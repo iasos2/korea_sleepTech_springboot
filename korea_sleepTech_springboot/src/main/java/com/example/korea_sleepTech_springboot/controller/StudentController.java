@@ -1,3 +1,4 @@
+
 package com.example.korea_sleepTech_springboot.controller;
 
 import com.example.korea_sleepTech_springboot.dto.response.StudentResponseDto;
@@ -58,7 +59,7 @@ public class StudentController {
      * @Return: StudentDto
      * */
     @PutMapping("/{id}")
-    public StudentResponseDto
+    public StudentUpdateRequestDto
     updateStudent(@PathVariable Long id, @RequestBody StudentUpdateRequestDto studentDto) {
         return studentService.updateStudent(id, studentDto);
     }

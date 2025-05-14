@@ -8,7 +8,6 @@ import com.example.korea_sleepTech_springboot.dto.user.response.UserSignUpRespon
 import jakarta.validation.Valid;
 
 public interface AuthService {
-    ResponseDto<UserSignUpResponseDto> signUp(@Valid UserSignUpRequestDto dto);
-
+    ResponseDto<UserSignUpResponseDto> signup(@Valid UserSignUpRequestDto dto);
     ResponseDto<UserSignInResponseDto> login(@Valid UserSignInRequestDto dto);
 }
