@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /*
  * === JwtProvider 클래스 ===
@@ -60,10 +63,11 @@ public class JwtProvider {
      * @Param: 사용자 정보
      * @Return: 생성된 JWT 토큰 문자열
      * */
-    public String generateJwtToken(String username) {
+    public String generateJwtToken(String username, Set<String> roles) {
         return Jwts.builder()
                 // 클레임에 사용자 ID를 저장 (User 엔티티의 id가 아니라, 로그인 시 사용할 사용자 식별자)
                 .claim("username", username)
+                .claim("roles", roles)
                 // 현재 시간을 기준으로 토큰 발행 시간 설정
                 .setIssuedAt(new Date())
                 // 현재 시간에 만료 시간을 더해 토큰 만료 시간 설정
@@ -135,8 +139,12 @@ public class JwtProvider {
      * @Return: 사용자 ID
      * */
     public String getUsernameFromJwt(String token) {
-
         Claims claims = getClaims(token);
         return claims.get("username", String.class); // 클레임에서 username 값을 문자열 형태로 반환
+    }
+
+    public Set<String> getRolesFromJwt(String token) {
+        Claims claims = getClaims(token);
+        return new HashSet<>((List<String>) claims.get("roles"));
     }
 }
