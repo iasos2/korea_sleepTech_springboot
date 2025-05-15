@@ -1,4 +1,4 @@
-package com.example.korea_sleepTech_springboot.dto.admin.reponse;
+package com.example.korea_sleepTech_springboot.dto.admin.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

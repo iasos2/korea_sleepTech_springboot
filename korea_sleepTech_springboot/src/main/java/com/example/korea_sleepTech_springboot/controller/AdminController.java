@@ -1,8 +1,8 @@
 package com.example.korea_sleepTech_springboot.controller;
 
 import com.example.korea_sleepTech_springboot.common.ApiMappingPattern;
-import com.example.korea_sleepTech_springboot.dto.admin.reponse.PromoteToAdminResponseDto;
 import com.example.korea_sleepTech_springboot.dto.admin.request.PromoteToAdminRequestDto;
+import com.example.korea_sleepTech_springboot.dto.admin.response.PromoteToAdminResponseDto;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.service.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AdminController {
     private final AdminService adminService;
 
-    // ==== AdminController mapping pattern ==== //
-    private static final String PUT_AUTHORITY_TO_ADMIN = "/promet";
+    // == AdminController mapping pattern == //
+    private static final String PUT_AUTHORITY_TO_ADMIN = "/promote";
 
-    @PreAuthorize("hasRole('Admin')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(PUT_AUTHORITY_TO_ADMIN)
     public ResponseEntity<ResponseDto<PromoteToAdminResponseDto>> promoteUserToAdmin(
             @RequestBody PromoteToAdminRequestDto dto
