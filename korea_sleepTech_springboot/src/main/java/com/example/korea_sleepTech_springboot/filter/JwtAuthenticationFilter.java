@@ -93,9 +93,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void setAuthenticationContext(HttpServletRequest request, String username, Set<String> roles) {
 
         List<GrantedAuthority> authorities = roles.stream()
+                // JWT 로그인 방식에서 사용자가 요청을 보낼 때
+                // , 토큰에 담긴 roles 정보를 hasRole("")과 매칭시키기 위함
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toList());
-
 
         // 사용자 ID를 바탕으로 UsernamePasswordAuthenticationToken(인증 토큰) 생성
         // : 기본 설정 - 권한 없음
