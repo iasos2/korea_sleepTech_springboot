@@ -6,7 +6,6 @@ plugins {
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
 
 java {
 	toolchain {
@@ -32,7 +31,6 @@ dependencies {
 
 	// 스프링 시큐리티 사용 스타터
 	implementation 'org.springframework.boot:spring-boot-starter-security'
-
 	testImplementation 'org.springframework.security:spring-security-test'
 
 	// 스프링 이메일 사용 스타터
