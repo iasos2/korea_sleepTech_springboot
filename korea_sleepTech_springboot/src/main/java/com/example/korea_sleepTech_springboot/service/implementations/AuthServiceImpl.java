@@ -39,6 +39,7 @@ public class AuthServiceImpl implements AuthService {
         UserSignUpResponseDto data = null;
         User user = null;
 
+
         // 패스워드 일치 여부 확인
         if (!password.equals(confirmPassword)) {
             // 일치하지 않은 경우
