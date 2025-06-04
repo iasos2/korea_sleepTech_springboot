@@ -1,6 +1,6 @@
 package com.example.korea_sleepTech_springboot.controller;
 
-import com.example.korea_sleepTech_springboot.common.ApiMappingPattern;
+import com.example.korea_sleepTech_springboot.common.constants.ApiMappingPattern;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.dto.user.request.UserUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.user.response.GetUserResponseDto;
@@ -35,12 +35,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(ApiMappingPattern.USER_API)
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
 
-    // == UserController mapping pattern ==
+    // === UserController mapping pattern === //
     private static final String GET_USER_INFO = "/me";
     private static final String PUT_USER_INFO = "/me";
-    private static final String DELETE_USER= "/me";
+    private static final String DELETE_USER = "/me";
 
     // 1) 회원 정보 조회
     @GetMapping(GET_USER_INFO)
@@ -51,6 +52,7 @@ public class UserController {
     ) {
         ResponseDto<GetUserResponseDto> response = userService.getUserInfo(userEmail);
         return ResponseEntity.ok(response);
+//        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // 2) 회원 정보 수정
@@ -67,8 +69,7 @@ public class UserController {
     @DeleteMapping(DELETE_USER)
     public ResponseEntity<ResponseDto<Void>> deleteUser(
             @AuthenticationPrincipal String userEmail
-    )
-    {
+    ){
         ResponseDto<Void> response = userService.deleteUser(userEmail);
         return ResponseEntity.noContent().build();
     }

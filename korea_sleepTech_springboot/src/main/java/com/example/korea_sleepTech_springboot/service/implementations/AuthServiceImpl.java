@@ -1,6 +1,6 @@
 package com.example.korea_sleepTech_springboot.service.implementations;
 
-import com.example.korea_sleepTech_springboot.common.ResponseMessage;
+import com.example.korea_sleepTech_springboot.common.constants.ResponseMessage;
 import com.example.korea_sleepTech_springboot.dto.auth.PasswordResetRequestDto;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.dto.user.request.UserSignInRequestDto;
@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -41,7 +42,6 @@ public class AuthServiceImpl implements AuthService {
 
         UserSignUpResponseDto data = null;
         User user = null;
-
 
         // 패스워드 일치 여부 확인
         if (!password.equals(confirmPassword)) {
@@ -116,6 +116,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Mono<ResponseEntity<String>> resetPassword(PasswordResetRequestDto dto) {
-        return null;
+        return Mono.fromCallable(() -> {
+            User user = userRepository.findByEmail(dto.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("가입된 이메일이 아닙니다."));
+
+//                if (!user.isEmailVerified()) {
+//                    return ResponseEntity.badRequest().body("이메일 인증이 필요합니다.");
+//                }
+
+            // 비밀번호, 비밀번호 확인 유효성 검사 필수! (일치 여부, 형식 여부)
+
+            user.setPassword(bCryptPasswordEncoder.encode(dto.getNewPassword()));
+            userRepository.save(user);
+
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        }).onErrorResume(e -> Mono.just(
+                ResponseEntity.badRequest().body("비밀번호 재설정 실패: " + e.getMessage())
+        )).subscribeOn(Schedulers.boundedElastic());
     }
 }

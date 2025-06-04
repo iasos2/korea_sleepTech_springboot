@@ -1,6 +1,6 @@
 package com.example.korea_sleepTech_springboot.service.implementations;
 
-import com.example.korea_sleepTech_springboot.common.ResponseMessage;
+import com.example.korea_sleepTech_springboot.common.constants.ResponseMessage;
 import com.example.korea_sleepTech_springboot.dto.response.ResponseDto;
 import com.example.korea_sleepTech_springboot.dto.user.request.UserUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.user.response.GetUserResponseDto;
@@ -20,7 +20,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    // 1) 회원정보 조회
+    // 1) 회원 정보 조회
     @Override
     public ResponseDto<GetUserResponseDto> getUserInfo(String userEmail) {
 
@@ -33,16 +33,6 @@ public class UserServiceImpl implements UserService {
         GetUserResponseDto data = new GetUserResponseDto(user);
 
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
-    }
-
-    @Override
-    public ResponseDto<Void> deleteUser(String userEmail) {
-        User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_USER));
-
-        userRepository.delete(user);
-
-        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
     }
 
     @Override
@@ -76,5 +66,15 @@ public class UserServiceImpl implements UserService {
 
         GetUserResponseDto data = new GetUserResponseDto(user);
         return ResponseDto.setSuccess(ResponseMessage.SUCCESS, data);
+    }
+
+    @Override
+    public ResponseDto<Void> deleteUser(String userEmail) {
+
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_USER));
+
+        userRepository.delete(user);
+        return ResponseDto.setSuccess(ResponseMessage.SUCCESS, null);
     }
 }

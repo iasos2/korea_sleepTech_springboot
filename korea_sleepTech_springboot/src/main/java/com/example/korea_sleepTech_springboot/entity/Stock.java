@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "stocks")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-@Setter
+@Getter @Setter
 public class Stock {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
@@ -24,5 +22,5 @@ public class Stock {
 
     private int quantity;
 
-    private LocalDateTime changedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 }

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UserUpdateRequestDto {
+public class UserUpdateRequestDto { // 비밀번호 재설정
     @NotNull
     private String password;
     @NotNull

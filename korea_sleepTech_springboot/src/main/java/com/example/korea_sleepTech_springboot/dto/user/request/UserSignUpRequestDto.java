@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserSignUpRequestDto {
+public class UserSignUpRequestDto { // 회원가입
     @NotNull
     private String email;
     @NotNull

@@ -1,6 +1,6 @@
 package com.example.korea_sleepTech_springboot.service.implementations;
 
-import com.example.korea_sleepTech_springboot.common.ResponseMessage;
+import com.example.korea_sleepTech_springboot.common.constants.ResponseMessage;
 import com.example.korea_sleepTech_springboot.dto.request.PostCreateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.request.PostUpdateRequestDto;
 import com.example.korea_sleepTech_springboot.dto.response.*;
@@ -53,7 +53,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new EntityNotFoundException(ResponseMessage.NOT_EXISTS_POST + id));
 
         List<CommentResponseDto> comments = post.getComments().stream()
-                .map(   comment -> CommentResponseDto.builder()
+                .map(comment -> CommentResponseDto.builder()
                         .id(comment.getId())
                         .postId(comment.getPost().getId())
                         .content(comment.getContent())
